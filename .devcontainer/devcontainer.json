@@ -1,0 +1,19 @@
+{
+  "name": "AI Platform Development",
+  "containerEnv": {
+    "DOCKER_USERNAME": "${localEnv:DOCKER_USERNAME}",
+    "DOCKER_PASSWORD": "${localEnv:DOCKER_PASSWORD}",
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+    "TRANSFORMERS_API_KEY": "${localEnv:TRANSFORMERS_API_KEY}",
+    "ENVIRONMENT": "development"
+  },
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/usr/local/bin",
+    "GRAFANA_ADMIN_PASSWORD": "${localEnv:GRAFANA_ADMIN_PASSWORD}",
+    "AZURE_STORAGE_ACCOUNT": "${localEnv:AZURE_STORAGE_ACCOUNT}",
+    "AZURE_STORAGE_CONTAINER": "${localEnv:AZURE_STORAGE_CONTAINER}"
+  },
+  "settings": {
+    "terminal.integrated.inheritEnv": true
+  }
+}

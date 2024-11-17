@@ -1,0 +1,128 @@
+# AI Platform Setup Configuration
+
+# Environment Settings
+environment:
+  type: production  # Can be development, staging, or production
+  region: us-west-2
+  zones: 
+    - us-west-2a
+    - us-west-2b
+    - us-west-2c
+
+# Cluster Configuration
+cluster:
+  name: ai-platform-cluster
+  version: "1.21"
+  node_groups:
+    standard:
+      instance_type: t3.medium
+      min_nodes: 1
+      max_nodes: 4
+      desired_nodes: 3
+
+# Service Ports
+ports:
+  web:
+    primary: 8000
+    alternatives: [8001, 8002, 8003, 8004]
+  api:
+    primary: 8080
+    alternatives: [8081, 8082, 8083, 8084]
+  https:
+    primary: 8443
+    alternatives: [8444, 8445, 8446, 8447]
+  monitoring:
+    primary: 9090
+    alternatives: [9091, 9092, 9093, 9094]
+
+# Monitoring Configuration
+monitoring:
+  prometheus:
+    namespace: monitoring
+    persistence:
+      enabled: true
+      size: 50Gi   # 50GB storage for Prometheus
+  grafana:
+    namespace: monitoring
+    admin_password: "${GRAFANA_ADMIN_PASSWORD}"
+    persistence:
+      enabled: true
+      size: 10Gi   # 10GB storage for Grafana
+
+# Backup Configuration
+backup:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+
+# Logging Configuration
+logging:
+  level: INFO
+  file:
+    path: /var/log/ai-platform
+    max_size: 100M
+    max_backups: 5
+  audit:
+    enabled: true
+    retention_days: 90
+
+# GPU Configuration
+gpu:
+  enabled: true
+  driver_version: "470.82.01"
+  cuda_version: "11.4"
+  runtime:
+    type: nvidia
+    default: true
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+    requests:
+      nvidia.com/gpu: 1
+
+# Enhanced Security Configuration
+security:
+  network_policies:
+    enabled: true
+    default_deny: true
+  pod_security:
+    enforce: restricted
+    audit: restricted
+    warn: restricted
+  secrets:
+    encryption:
+      enabled: true
+      provider: vault
+  admission_controllers:
+    - PodSecurityPolicy
+    - NodeRestriction
+    - AlwaysPullImages
+
+# Health Check Configuration
+health_checks:
+  enabled: true
+  initial_delay: 30
+  period: 10
+  timeout: 5
+  failure_threshold: 3
+  success_threshold: 1
+  endpoints:
+    - /health
+    - /metrics
+    - /ready
+
+# AI Service Configuration
+ai_services:
+  nlp:
+    model_type: transformer
+    max_sequence_length: 512
+    batch_size: 32
+    memory_efficient_attention: true
+    quantization:
+      enabled: true
+      bits: 8
+  inference:
+    max_concurrent_requests: 100
+    timeout_seconds: 30
+    auto_scale:
+      min_replicas: 2
+      max_replicas: 10
+      target_cpu_utilization: 70

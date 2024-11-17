@@ -1,0 +1,39 @@
+apiVersion: velero.io/v1
+kind: Deployment
+metadata:
+  name: velero
+  namespace: velero
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: velero
+  template:
+    metadata:
+      labels:
+        component: velero
+    spec:
+      containers:
+        - name: velero
+          image: velero/velero:v1.6.0
+          command:
+            - velero
+          args:
+            - server
+            - --plugins
+            - velero-plugin-for-aws:v1.0.0
+          env:
+            - name: AWS_REGION
+              value: "us-west-2"
+            - name: VELERO_S3_BUCKET
+              value: "ai-platform-backups"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: aws_access_key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: aws_secret_access_key 

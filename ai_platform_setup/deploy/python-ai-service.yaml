@@ -1,0 +1,21 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-ai-service
+  namespace: ai-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-ai-service
+  template:
+    metadata:
+      labels:
+        app: python-ai-service
+    spec:
+      containers:
+        - name: python-ai-service
+          image: python-ai-service:latest
+          ports:
+            - containerPort: 8000

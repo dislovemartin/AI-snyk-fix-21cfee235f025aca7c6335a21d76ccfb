@@ -1,0 +1,21 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scala-service
+  namespace: ai-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: scala-service
+  template:
+    metadata:
+      labels:
+        app: scala-service
+    spec:
+      containers:
+        - name: scala-service
+          image: scala-service:latest
+          ports:
+            - containerPort: 8080

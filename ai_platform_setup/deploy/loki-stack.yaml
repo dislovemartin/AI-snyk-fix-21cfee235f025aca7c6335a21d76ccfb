@@ -1,0 +1,76 @@
+# Example Loki Stack Deployment
+# Replace with actual configurations as needed
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki
+  namespace: logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+  template:
+    metadata:
+      labels:
+        app: loki
+    spec:
+      containers:
+      - name: loki
+        image: grafana/loki:2.3.0
+        ports:
+        - containerPort: 3100
+        args:
+        - -config.file=/etc/loki/local-config.yaml
+        volumeMounts:
+        - name: config
+          mountPath: /etc/loki
+      volumes:
+      - name: config
+        configMap:
+          name: loki-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-config
+  namespace: logging
+data:
+  local-config.yaml: |
+    auth_enabled: false
+
+    server:
+      http_listen_port: 3100
+
+    ingester:
+      lifecycler:
+        address: 127.0.0.1
+        ring:
+          kvstore:
+            store: inmemory
+          replication_factor: 1
+      chunk_idle_period: 5m
+      chunk_retain_period: 30s
+      max_transfer_retries: 0
+
+    schema_config:
+      configs:
+      - from: 2020-10-15
+        store: boltdb
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: index_
+          period: 168h
+
+    storage_config:
+      boltdb:
+        directory: /loki/index
+      filesystem:
+        directory: /loki/chunks
+
+    limits_config:
+      enforce_metric_name: false
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h 

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  nlp-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ENVIRONMENT=${ENVIRONMENT}
+    depends_on:
+      - transformers-service
+    networks:
+      - ai_network
+
+  transformers-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000"
+    environment:
+      - TRANSFORMERS_API_KEY=${TRANSFORMERS_API_KEY}
+    networks:
+      - ai_network
+
+  vault:
+    image: vault:1.7.3
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "s.YourVaultTokenHere"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - ai_network
+
+networks:
+  ai_network:
+    driver: bridge 

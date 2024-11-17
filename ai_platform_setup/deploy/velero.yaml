@@ -1,0 +1,25 @@
+# Example Velero Deployment with AWS Provider
+# Replace with actual configurations as needed
+
+apiVersion: velero.io/v1
+kind: BackupStorageLocation
+metadata:
+  name: default
+  namespace: velero
+spec:
+  provider: aws
+  objectStorage:
+    bucket: "${BACKUP_BUCKET_NAME}"
+    prefix: "velero"
+  config:
+    region: "${AWS_REGION}"
+---
+apiVersion: velero.io/v1
+kind: VolumeSnapshotLocation
+metadata:
+  name: default
+  namespace: velero
+spec:
+  provider: aws
+  config:
+    region: "${AWS_REGION}" 

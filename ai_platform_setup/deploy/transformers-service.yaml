@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transformers-service
+  namespace: ai-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: transformers-service
+  template:
+    metadata:
+      labels:
+        app: transformers-service
+    spec:
+      containers:
+      - name: transformers-service
+        image: your-dockerhub-username/transformers-service:latest
+        ports:
+        - containerPort: 7000
+        env:
+        - name: TRANSFORMERS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: transformers-api-key
+              key: TRANSFORMERS_API_KEY 

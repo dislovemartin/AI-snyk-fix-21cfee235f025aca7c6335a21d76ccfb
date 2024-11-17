@@ -1,0 +1,15 @@
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: python-ai-service-monitor
+  namespace: monitoring
+  labels:
+    app: python-ai-service
+spec:
+  selector:
+    matchLabels:
+      app: python-ai-service
+  endpoints:
+  - port: web
+    interval: 30s

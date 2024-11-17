@@ -1,0 +1,15 @@
+
+image:
+  repository: python-ai-service
+  tag: latest
+replicaCount: 2
+service:
+  type: ClusterIP
+  port: 8000
+resources:
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"

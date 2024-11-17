@@ -1,0 +1,49 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-rust-service
+  namespace: ai-platform
+spec:
+  replicas: {{ .Values.replicaCount | default 2 }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-rust-service
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-rust-service
+    spec:
+      containers:
+        - name: rust-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default 'latest' }}"
+          ports:
+            - containerPort: {{ .Values.service.port | default 8081 }}
+          env:
+            - name: API_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: ai-platform-shared-config
+                  key: API_ENDPOINT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: ai-platform-shared-config
+                  key: LOG_LEVEL
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ai-platform-shared-secret
+                  key: DB_PASSWORD
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10

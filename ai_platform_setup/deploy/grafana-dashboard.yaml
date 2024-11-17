@@ -1,0 +1,14 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard
+  namespace: monitoring
+data:
+  ai-platform-dashboard.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "dashboards.json": [{"title":"AI Platform","uid":"ai-platform","panels":[]}]
+    }

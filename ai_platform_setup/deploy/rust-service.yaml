@@ -1,0 +1,21 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rust-service
+  namespace: ai-platform
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rust-service
+  template:
+    metadata:
+      labels:
+        app: rust-service
+    spec:
+      containers:
+        - name: rust-service
+          image: rust-service:latest
+          ports:
+            - containerPort: 8081

@@ -1,0 +1,36 @@
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: ai-platform
+  name: ai-platform-common-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "endpoints"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+# RoleBinding to assign the common role to each service's ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ai-platform-common-binding
+  namespace: ai-platform
+subjects:
+  - kind: ServiceAccount
+    name: python-ai-service-sa
+    namespace: ai-platform
+  - kind: ServiceAccount
+    name: scala-service-sa
+    namespace: ai-platform
+  - kind: ServiceAccount
+    name: rust-service-sa
+    namespace: ai-platform
+roleRef:
+  kind: Role
+  name: ai-platform-common-role
+  apiGroup: rbac.authorization.k8s.io

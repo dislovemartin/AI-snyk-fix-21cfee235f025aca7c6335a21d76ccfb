@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-nlp-to-openai
+  namespace: ai-platform
+spec:
+  podSelector:
+    matchLabels:
+      app: nlp-service
+  policyTypes:
+  - Ingress
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: azure-openai
+    ports:
+    - protocol: TCP
+      port: 443
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    ports:
+    - protocol: TCP
+      port: 5000 
